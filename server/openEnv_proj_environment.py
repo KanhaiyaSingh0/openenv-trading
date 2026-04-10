@@ -90,7 +90,7 @@ class TradingEnvironment(Environment):
         self.transactions = []
         self.daily_returns = []
         
-        return self._get_observation(reward=0.0, done=False)
+        return self._get_observation(reward=0.01, done=False)
 
     def step(self, action: TradingAction) -> TradingObservation:
         """Execute one step in the environment."""
@@ -197,7 +197,7 @@ class TradingEnvironment(Environment):
             total_transactions=len(self.transactions),
             daily_pnl=round(self.daily_returns[-1] if self.daily_returns else 0.0, 2),
             done=done,
-            reward=round(reward, 4),
+            reward=round(max(min(reward, 0.99), 0.01), 4),  # Strictly (0, 1)
         )
 
     def _calculate_reward(self, portfolio_value: float, daily_pnl: float, max_drawdown: float, done: bool) -> float:
