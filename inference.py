@@ -81,10 +81,19 @@ def log_step(step: int, action: str, reward: float, done: bool, error: Optional[
 
 
 def log_end(success: bool, steps: int, rewards: List[float]) -> None:
-    """Log episode end - EXACT FORMAT per spec (NO score field)."""
+    """Log episode end - EXACT FORMAT per spec (MUST INCLUDE score field)."""
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     success_str = "true" if success else "false"  # MUST BE LOWERCASE
-    print(f"[END] success={success_str} steps={steps} rewards={rewards_str}", flush=True)
+    
+    # Calculate a score strictly between 0 and 1
+    # We use the final reward, or average reward, but clamp it to (0.01, 0.99)
+    if rewards:
+        avg_reward = sum(rewards) / len(rewards)
+        score = max(min(avg_reward, 0.99), 0.01)
+    else:
+        score = 0.01
+        
+    print(f"[END] success={success_str} steps={steps} score={score:.4f} rewards={rewards_str}", flush=True)
 
 
 # ============================================================================
