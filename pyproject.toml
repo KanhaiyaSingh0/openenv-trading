@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openenv-trading"
+version = "0.1.0"
+description = "Trading environment for OpenEnv Hackathon - RL trading with margin management"
+requires-python = ">=3.10"
+dependencies = [
+    # Core OpenEnv runtime
+    "openenv-core[core]>=0.2.2",
+    # LLM inference
+    "openai>=1.0.0",
+    # HTTP client for inference
+    "requests>=2.28.0",
+    # Math/stats for simulations and rewards
+    "numpy>=1.19.0",
+    # FastAPI server (included with openenv-core but explicit for clarity)
+    "fastapi>=0.115.0",
+    "uvicorn>=0.24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.scripts]
+# Server entry point
+server = "openenv_trading.server.app:main"
+
+[tool.setuptools]
+include-package-data = true
+packages = ["openenv_trading", "openenv_trading.server"]
+package-dir = { "openenv_trading" = ".", "openenv_trading.server" = "server" }
