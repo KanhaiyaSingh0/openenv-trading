@@ -246,8 +246,8 @@ class TradingEnvironment(Environment):
             elif portfolio_value < self.initial_balance * 0.98:
                 reward -= 0.1  # Penalty for significant loss
         
-        # Clamp to [0, 1]
-        return max(min(reward, 1.0), 0.0)
+        # Clamp to strictly (0, 1) — validator rejects exactly 0.0 or 1.0
+        return max(min(reward, 0.99), 0.01)
 
     def _calculate_volatility(self) -> float:
         """Calculate daily return volatility."""

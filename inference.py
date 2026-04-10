@@ -216,13 +216,14 @@ def run_trading_episode(task: str, client: OpenAI) -> tuple:
 
                 if step_resp.status_code != 200:
                     error_msg = f"HTTP {step_resp.status_code}"
-                    log_step(step=step, action=f"{action} {quantity}", reward=0.0, done=True, error=error_msg)
-                    rewards.append(0.0)
+                    log_step(step=step, action=f"{action} {quantity}", reward=0.01, done=True, error=error_msg)
+                    rewards.append(0.01)
                     steps_taken = step
                     break
 
                 result = step_resp.json()
-                reward = result.get("reward", 0.0)
+                raw_reward = result.get("reward", 0.01)
+                reward = max(min(raw_reward, 0.99), 0.01)  # Strictly (0, 1)
                 done = result.get("done", False)
                 state = result.get("observation", state)
                 error = result.get("last_action_error", None)
@@ -235,13 +236,13 @@ def run_trading_episode(task: str, client: OpenAI) -> tuple:
                     break
 
             except requests.RequestException as e:
-                log_step(step=step, action="ERROR", reward=0.0, done=True, error=str(e))
-                rewards.append(0.0)
+                log_step(step=step, action="ERROR", reward=0.01, done=True, error=str(e))
+                rewards.append(0.01)
                 steps_taken = step
                 break
             except Exception as e:
-                log_step(step=step, action="ERROR", reward=0.0, done=True, error=str(e))
-                rewards.append(0.0)
+                log_step(step=step, action="ERROR", reward=0.01, done=True, error=str(e))
+                rewards.append(0.01)
                 steps_taken = step
                 break
 
